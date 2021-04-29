@@ -31,12 +31,44 @@ ORDER BY COUNT(id) DESC LIMIT 1
 
 JOIN
 1) Come si chiamano gli ospiti che hanno fatto più di due prenotazioni?
-
+SELECT name, lastname, ospite_id, COUNT(ospiti.id)
+FROM prenotazioni_has_ospiti
+INNER JOIN ospiti
+ON ospiti.id = prenotazioni_has_ospiti.ospite_id
+GROUP BY ospite_id
+HAVING COUNT(ospiti.id) > 2
 
 2) Stampare tutti gli ospiti per ogni prenotazione
-
+SELECT
+prenotazioni_has_ospiti.prenotazione_id,
+prenotazioni_has_ospiti.ospite_id,
+ospiti.name,
+ospiti.lastname
+FROM prenotazioni_has_ospiti
+INNER JOIN ospiti
+ON prenotazioni_has_ospiti.ospite_id = ospiti.id
 
 3) Stampare Nome, Cognome, Prezzo e Pagante per tutte le prenotazioni fatte a Maggio 2018
+SELECT 
+prenotazioni.id,
+prenotazioni.created_at,
+prenotazioni_has_ospiti.ospite_id,
+ospiti.name,
+ospiti.lastname,
+pagamenti.pagante_id,
+paganti.name,
+paganti.lastname,
+pagamenti.price
+FROM prenotazioni
+INNER JOIN prenotazioni_has_ospiti
+ON prenotazioni.id = prenotazioni_has_ospiti.id
+INNER JOIN ospiti
+ON prenotazioni_has_ospiti.ospite_id = ospiti.id
+INNER JOIN pagamenti
+ON prenotazioni.id = pagamenti.prenotazione_id
+INNER JOIN paganti
+ON pagamenti.pagante_id = paganti.id
+HAVING prenotazioni.created_at LIKE '2018-05%'
 
 
 4) Fai la somma di tutti i prezzi delle prenotazioni per le stanze del primo piano
